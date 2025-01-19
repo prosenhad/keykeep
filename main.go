@@ -11,15 +11,17 @@ import (
 )
 
 func main() {
+	vault := account.NewVault()
+
 Menu:
 	for {
 		fmt.Println(strings.Repeat("_", 10))
 		variant := Menu()
 		switch variant {
 		case 1:
-			createAccount()
+			createAccount(vault)
 		case 2:
-			fmt.Println("Тут будет поиск аккаунта")
+			findAccount(vault)
 		case 3:
 			fmt.Println("Тут будет удаление аккаунта")
 		default:
@@ -37,11 +39,11 @@ func Menu() int {
 	fmt.Println("3. Удалить вкладку")
 	fmt.Println("4. Выйти")
 	fmt.Print("Ваш выбор: ")
-	fmt.Scanln(&choice)
+	fmt.Scan(&choice)
 	return choice
 }
 
-func createAccount() {
+func createAccount(vault *account.Vault) {
 	login := SetPrompt("Введите ваш Логин")
 	password := SetPrompt("Введите ваш Пароль")
 	url := SetPrompt("Введите url-адрес")
@@ -50,15 +52,16 @@ func createAccount() {
 		fmt.Println(err.Error())
 		return
 	}
-	vault := account.NewVault()
 	vault.AddAccount(*myAccount)
+}
 
-	// data, err := vault.ToBytes()
-	// if err != nil {
-	// 	fmt.Println("Не удалось преобразовать в JSON")
-	// 	return
-	// }
-	// files.WriteIntoFile(data, "data.json")
+func findAccount(vault *account.Vault) {
+	url := SetPrompt("Введите url или его часть")
+	accounts := vault.GetAccountByURL(url)
+	for _, acc := range accounts {
+		acc.GetAccount()
+	}
+
 }
 
 func SetPrompt(prompt string) string {

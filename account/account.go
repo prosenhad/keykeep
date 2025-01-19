@@ -13,7 +13,7 @@ import (
 
 const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJLLMNOPQRSTUVWXYZ123456789!#*"
 
-type accountUser struct {
+type Account struct {
 	Login     string    `json:"login"`
 	Password  string    `json:"password"`
 	Url       string    `json:"url"`
@@ -21,7 +21,7 @@ type accountUser struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-func (a *accountUser) genPass(n int) {
+func (a *Account) genPass(n int) {
 	charsSlice := []rune(chars)
 	password := make([]rune, n)
 	for i := range password {
@@ -30,11 +30,11 @@ func (a *accountUser) genPass(n int) {
 	a.Password = string(password)
 }
 
-func (a *accountUser) Pass() {
+func (a *Account) Pass() {
 	fmt.Println((*a).Password)
 }
 
-func (a *accountUser) Account() {
+func (a *Account) GetAccount() {
 	if a == nil {
 		fmt.Println("НИЧЕГО НЕ ЗАПИСАЛОСЬ")
 		return
@@ -42,13 +42,12 @@ func (a *accountUser) Account() {
 	color.Cyan(a.Login)
 	color.Green(a.Url)
 	fmt.Println(a.CreatedAt.Date())
-	fmt.Println(a.UpdatedAt.Date())
+	// fmt.Println(a.UpdatedAt.Date())
 	color.Red(a.Password)
-
 }
 
-func NewAccount(userLogin string, userPass string, userURL string) (*accountUser, error) {
-	newAccount := accountUser{}
+func NewAccount(userLogin string, userPass string, userURL string) (*Account, error) {
+	newAccount := Account{}
 	if utf8.RuneCountInString(userURL) == 0 {
 		return nil, errors.New("пустой url")
 	}

@@ -2,6 +2,7 @@ package account
 
 import (
 	"encoding/json"
+	"strings"
 	"time"
 
 	"github.com/fatih/color"
@@ -10,8 +11,8 @@ import (
 
 // Новая структура для массива аккаунтов
 type Vault struct {
-	Accounts  []accountUser `json:"accounts"`
-	UpdatedAt time.Time     `json:"updatedAt"`
+	Accounts  []Account `json:"accounts"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 // метод для перевода данных в байт-массив
@@ -23,15 +24,25 @@ func (v *Vault) ToBytes() ([]byte, error) {
 	return file, nil
 }
 
-func (v *Vault) AddAccount(acc accountUser) {
+func (v *Vault) AddAccount(acc Account) {
 	v.Accounts = append(v.Accounts, acc)
 	v.UpdatedAt = time.Now()
 	data, err := v.ToBytes()
 	if err != nil {
-		// color.Red(err.Error())
 		color.Red("Не удалось преобразовать в JSON")
 	}
 	files.WriteIntoFile(data, "data.json")
+}
+
+func (v *Vault) GetAccountByURL(url string) []Account {
+	var foundAccounts []Account
+	for _, acc := range v.Accounts {
+		isMatched := strings.Contains(acc.Url, url)
+		if isMatched {
+			foundAccounts = append(foundAccounts, acc)
+		}
+	}
+	return foundAccounts
 }
 
 // Дефолтное создание нового хранилища для МАССИВА аккаунтов
@@ -39,7 +50,7 @@ func NewVault() *Vault {
 	file, err := files.ReadFromFile("data.json")
 	if err != nil {
 		return &Vault{
-			Accounts:  []accountUser{},
+			Accounts:  []Account{},
 			UpdatedAt: time.Now(),
 		}
 	}
@@ -49,7 +60,7 @@ func NewVault() *Vault {
 	if err != nil {
 		color.Red("Не удалось преобразовать байты в Json. Файл был перезаписан")
 		return &Vault{
-			Accounts:  []accountUser{},
+			Accounts:  []Account{},
 			UpdatedAt: time.Now(),
 		}
 		// log.Fatal(err)
