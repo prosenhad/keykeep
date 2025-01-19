@@ -33,6 +33,7 @@ Menu:
 }
 
 func Menu() int {
+	fmt.Println("Hello")
 	var choice int
 	fmt.Println("1. Создать вкладку")
 	fmt.Println("2. Найти вкладку")
