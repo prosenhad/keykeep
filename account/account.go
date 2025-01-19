@@ -14,42 +14,38 @@ import (
 const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJLLMNOPQRSTUVWXYZ123456789!@#$%^&*"
 
 type accountUser struct {
-	login    string `json:"login" xml:"xlogin"`
-	password string `json:"password" xml:"xpassword"`
-	url      string `json:"url" xml:"xurl"`
+	Login     string `json:"login" xml:"xlogin"`
+	Password  string `json:"password" xml:"xpassword"`
+	Url       string `json:"url" xml:"xurl"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
-type accountWithTimeStamp struct {
-	createdAt time.Time
-	updatedAt time.Time
-	accountUser
-}
-
-func (a *accountWithTimeStamp) genPass(n int) {
+func (a *accountUser) genPass(n int) {
 	charsSlice := []rune(chars)
 	password := make([]rune, n)
 	for i := range password {
 		password[i] = charsSlice[rand.IntN(len(charsSlice))]
 	}
-	a.password = string(password)
+	a.Password = string(password)
 }
 
-func (a *accountWithTimeStamp) Pass() {
-	fmt.Println((*a).password)
+func (a *accountUser) Pass() {
+	fmt.Println((*a).Password)
 }
 
-func (a *accountWithTimeStamp) Account() {
+func (a *accountUser) Account() {
 
-	color.Cyan(a.login)
-	color.Green(a.url)
-	fmt.Println(a.createdAt.Date())
-	fmt.Println(a.updatedAt.Date())
-	color.Red(a.password)
+	color.Cyan(a.Login)
+	color.Green(a.Url)
+	fmt.Println(a.CreatedAt.Date())
+	fmt.Println(a.UpdatedAt.Date())
+	color.Red(a.Password)
 
 }
 
-func NewAccountWithTimestamp(userLogin string, userPass string, userURL string) (*accountWithTimeStamp, error) {
-	newAccount := accountWithTimeStamp{}
+func NewAccount(userLogin string, userPass string, userURL string) (*accountUser, error) {
+	newAccount := accountUser{}
 	if utf8.RuneCountInString(userURL) == 0 {
 		return nil, errors.New("пустой url")
 	}
@@ -58,7 +54,7 @@ func NewAccountWithTimestamp(userLogin string, userPass string, userURL string) 
 		return nil, fmt.Errorf("неверный формат ссылки %s", userURL)
 	}
 	if utf8.RuneCountInString(userPass) != 0 && utf8.RuneCountInString(userPass) >= 8 {
-		newAccount.password = userPass
+		newAccount.Password = userPass
 	} else {
 		fmt.Println("Пароль не безопасен. Был сгенерирован новый")
 		utf8.RuneCountInString(userPass)
@@ -67,9 +63,9 @@ func NewAccountWithTimestamp(userLogin string, userPass string, userURL string) 
 	if utf8.RuneCountInString(userLogin) == 0 {
 		return nil, errors.New("логин не может быть пустым")
 	}
-	newAccount.login = userLogin
-	newAccount.url = userURL
-	newAccount.createdAt = time.Now()
-	newAccount.updatedAt = time.Now()
+	newAccount.Login = userLogin
+	newAccount.Url = userURL
+	newAccount.CreatedAt = time.Now()
+	newAccount.UpdatedAt = time.Now()
 	return &newAccount, nil
 }
