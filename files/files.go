@@ -1,35 +1,42 @@
 package files
 
 import (
-	"bufio"
 	"fmt"
-	"log"
 	"os"
+
+	"github.com/fatih/color"
 )
 
-func ReadFromFile(filename string) {
-	fn, err := os.UserHomeDir()
-	if err != nil {
-		fmt.Println(err)
-	}
+func ReadFromFile(filename string) ([]byte, error) {
+	fn, _ := os.UserHomeDir()
+	// if err != nil {
+	// 	color.Red(err.Error())
+	// 	return nil, err
+	// }
 	fn += "/" + filename
-	content, err := os.Open(fn)
+	data, err := os.ReadFile(fn)
 	if err != nil {
-		fmt.Println(err)
+		color.Red(err.Error())
+		return nil, err
 	}
-	defer content.Close()
-	scanner := bufio.NewScanner(content)
-	for scanner.Scan() {
-		fmt.Println(scanner.Text(), "ENDING")
-	}
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
+	return data, nil
+
+	// file, err := os.Open(fn)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
+	// defer file.Close()
+	// scanner := bufio.NewScanner(file)
+	// for scanner.Scan() {
+	// 	fmt.Println(scanner.Text(), "ENDING")
+	// }
+	// if err := scanner.Err(); err != nil {
+	// 	log.Fatal(err)
+	// }
 
 }
 
-func WriteIntoFile(content string, fileName string) {
-	fmt.Println(os.Getwd())
+func WriteIntoFile(content []byte, fileName string) {
 	hd, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Println(err)
@@ -41,8 +48,7 @@ func WriteIntoFile(content string, fileName string) {
 		return
 	}
 	defer file.Close()
-
-	_, err = file.WriteString(content)
+	_, err = file.Write(content)
 	if err != nil {
 		fmt.Println(err)
 		return

@@ -11,14 +11,14 @@ import (
 	"github.com/fatih/color"
 )
 
-const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJLLMNOPQRSTUVWXYZ123456789!@#$%^&*"
+const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJLLMNOPQRSTUVWXYZ123456789!#*"
 
 type accountUser struct {
-	Login     string `json:"login" xml:"xlogin"`
-	Password  string `json:"password" xml:"xpassword"`
-	Url       string `json:"url" xml:"xurl"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	Login     string    `json:"login"`
+	Password  string    `json:"password"`
+	Url       string    `json:"url"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 func (a *accountUser) genPass(n int) {
@@ -35,7 +35,10 @@ func (a *accountUser) Pass() {
 }
 
 func (a *accountUser) Account() {
-
+	if a == nil {
+		fmt.Println("НИЧЕГО НЕ ЗАПИСАЛОСЬ")
+		return
+	}
 	color.Cyan(a.Login)
 	color.Green(a.Url)
 	fmt.Println(a.CreatedAt.Date())
