@@ -45,6 +45,27 @@ func (v *Vault) GetAccountByURL(url string) []Account {
 	return foundAccounts
 }
 
+func (v *Vault) DelAccountByURL(url string) bool {
+	var untrackAccounts []Account
+	isDeleted := false
+	for _, acc := range v.Accounts {
+		isMatched := strings.Contains(acc.Url, url)
+		if !isMatched {
+			untrackAccounts = append(untrackAccounts, acc)
+			continue
+		}
+		isDeleted = true
+	}
+	v.Accounts = untrackAccounts
+	v.UpdatedAt = time.Now()
+	data, err := v.ToBytes()
+	if err != nil {
+		color.Red("Не удалось преобразовать в JSON")
+	}
+	files.WriteIntoFile(data, "data.json")
+	return isDeleted
+}
+
 // Дефолтное создание нового хранилища для МАССИВА аккаунтов
 func NewVault() *Vault {
 	file, err := files.ReadFromFile("data.json")

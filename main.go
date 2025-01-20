@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/prosenhad/keykeep/account"
 )
 
@@ -23,7 +24,7 @@ Menu:
 		case 2:
 			findAccount(vault)
 		case 3:
-			fmt.Println("Тут будет удаление аккаунта")
+			deleteAccount(vault)
 		default:
 			break Menu
 		}
@@ -61,6 +62,17 @@ func findAccount(vault *account.Vault) {
 	accounts := vault.GetAccountByURL(url)
 	for _, acc := range accounts {
 		acc.GetAccount()
+	}
+
+}
+
+func deleteAccount(vault *account.Vault) {
+	url := SetPrompt("Введите url или его часть")
+	isDeleted := vault.DelAccountByURL(url)
+	if isDeleted {
+		color.Green("Ссылка(и) удалена(ы)")
+	} else {
+		color.Red("Не найдено ссылок с таким именем")
 	}
 
 }
